@@ -17,7 +17,7 @@ def load_corpus(path):
     else:
         #Exception("Direccion incorrecta")
         print("La direccion no es correcta")
-    print(dict_doc_path)
+    
     return [text, dict_doc_path]
 
 

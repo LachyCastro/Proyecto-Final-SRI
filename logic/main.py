@@ -34,7 +34,7 @@ def vectorial_model(query):
     #hay que encapsular el comportamiento de coger el ranking y dar los documentos
     documents =[]    
     count = 0
-    directorio = pathlib.Path('C:/Users/lachy/Videos/LACHY/SRI/static/corpus/alt.atheism/')
+    directorio = pathlib.Path('C:/Users/acer/Downloads/Telegram Desktop/SRI/corpus')
     for fichero in directorio.iterdir():
         if count == 10:
             break
@@ -49,8 +49,7 @@ def vectorial_model(query):
 
 
 def charge_corpus():
-    print('-----')
-    text = load_corpus('C:/Users/lachy/Videos/LACHY/SRI/static/corpus')
+    text = load_corpus('C:/Users/acer/Downloads/Telegram Desktop/SRI/corpus')
     tfidf = TfidfVectorizer()
     filter_text = []
     count = 0

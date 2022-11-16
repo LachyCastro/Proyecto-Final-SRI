@@ -13,12 +13,12 @@ def load_corpus(path):
                 with open(os.path.join(root,filename), encoding='utf8', errors='ignore') as f:
                     dict_doc_path[doc] = os.path.join(root,filename) 
                     doc+=1
-                    #text.append(f.read())
+                    text.append(f.read())
     else:
         #Exception("Direccion incorrecta")
         print("La direccion no es correcta")
     print(dict_doc_path)
-    return text, dict_doc_path
+    return [text, dict_doc_path]
 
 
-load_corpus('C:/Users/acer/Downloads/Telegram Desktop/SRI/corpus/alt.atheism/')
+#load_corpus('C:/Users/acer/Downloads/Telegram Desktop/SRI/corpus/alt.atheism/')

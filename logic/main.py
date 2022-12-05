@@ -7,6 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from .ranking import cal_ranking
 from .ranking import order_ranking
 import pickle
+from .boolean import *
 
 #tODO testing load files
 load_c = True
@@ -16,7 +17,6 @@ def vectorial_model(query):
         charge_corpus()
     q = query
     
-    print("--------------------------------------------------------------aqui1")
     pickle_1 = open('dic_vocabulary.txt','rb')
     vocabu = pickle.load(pickle_1)					#!dict{'word':index}
     pickle_2 = open('dic_word_idf.txt','rb')
@@ -27,14 +27,12 @@ def vectorial_model(query):
     dic_doc_words = pickle.load(pickle_4)           #!dict{doc:'words'}
     pickle_5 = open('dic_doc_path.txt','rb')       
     dic_doc_patch = pickle.load(pickle_5)			#!dict{doc:'patch'}
-    print("--------------------------------------------------------------aqui2")
-
+    
     vect_query = {}
     for term in q:
         vect_query[vocabu[term]] = dic_word_idf[term]
     rank = cal_ranking(dic_doc_words,vocabu,q,dic_indx_tfidf,dic_word_idf)
     orded_rank = order_ranking(rank, dic_doc_patch)#Ordena los path del ranking
-    print(orded_rank)
    
     #se queda con la cantidad que se decidan mostrar y los retorna
     documents =[]    
@@ -46,11 +44,23 @@ def vectorial_model(query):
         documents.append(path)
         count += 1
 
-    print(documents.__len__(), 'documentosssssssssssssssssssssssssssssssssssss')
     return documents
     
+def boolean_model(query):
+    if not load_c:
+        charge_corpus()
+    q = query #falta procesar la query y llevarla a fnd
+    
+    pickle_1 = open('dic_vocabulary.txt','rb')
+    vocabu = pickle.load(pickle_1)					#!dict{'word':index}
+    pickle_4 = open('dic_doc_words.txt','rb')
+    dic_doc_words = pickle.load(pickle_4)           #!dict{doc:'words'}
+    pickle_5 = open('dic_doc_path.txt','rb')       
+    dic_doc_patch = pickle.load(pickle_5)			#!dict{doc:'patch'}
+    
+    documents = valid_documents(dic_doc_words, dic_doc_patch, query)
 
-
+    return documents
 
 def charge_corpus():
     text, dic_doc_path = load_corpus('C:/Users/lachy/Videos/LACHY/Proyecto Final SRI/corpus')

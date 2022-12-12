@@ -3,7 +3,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from logic.proc_query import get_query_input
 from django.core.paginator import Paginator
-from logic.main import vectorial_model, boolean_model
+from logic.main import vectorial_model, boolean_model, extended_boolean_model
 
 def index(request):
     return render(request, 'index.html')
@@ -26,10 +26,13 @@ class DocumentList(ListView): #Vistas de los recursos en PDF####################
             resource = vectorial_model(process_query)
         elif(type_query == "Boolean"):
             resource = boolean_model(query)
-            
-        paginator = Paginator(resource, 12)
-        page = request.GET.get('page')
-        resources = paginator.get_page(page)
+        elif(type_query =="Extended Boolean"):
+            print("Esta entrandoooooooooooooooo")
+            resource = extended_boolean_model(query) 
+
+        # paginator = Paginator(resource, 12)
+        # page = request.GET.get('page')
+        # resources = paginator.get_page(page)
 
 
-        return render(request,'documents.html', {'document_list': resources})
+        return render(request,'documents.html', {'document_list': resource})

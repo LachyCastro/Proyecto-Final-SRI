@@ -110,18 +110,12 @@ def filter_important_words(f4_words) -> str:
 
 def filter_words(lines):
     f1 = repleace_contractions(lines)
-    print(f1,"F111111111111111111111111111111")
     f2 = stem_tokens(f1)
-    print(f2,"F2222222222222222222222222222222")
     f3 = repleace_punctuation_marks(f2)
-    print(f3,"F333333333333333333333333333333")
     f4 = eliminate_stop_words(f3)
-    print(f4,"F44444444444444444444444444444")
     f5 = classify_words(f4)
-    print(f5,"F5555555555555555555555555555555")
     #print(f5)
     f6 = filter_important_words(f5)
-    print(f6,"F66666666666666666666666666666")
     return f6
 
 

@@ -5,7 +5,6 @@ def valid_documents(dic_doc_words, dic_doc_patch, query):
     ranking = []
     index = 0
     query = rest_query(query, terms)
-    print(query,"Queryyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
     for doc in dic_doc_words.keys():
         values = query
         for term in terms:
@@ -18,7 +17,7 @@ def valid_documents(dic_doc_words, dic_doc_patch, query):
         index+=1
     return ranking
 
-def terms_query(query):
+def terms_query(query): #Pasar a utils q esta repetido para el booleano extendido
     terms = query.replace('(', '')
     terms = terms.replace(')', '')
     terms = terms.replace('and', '')

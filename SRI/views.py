@@ -8,13 +8,6 @@ from logic.main import vectorial_model, boolean_model, extended_boolean_model
 def index(request):
     return render(request, 'index.html')
 
-# def get_query(request):
-
-#     type_query = request.GET["choices-single-defaul"] #para saber luego q modelo aplicar
-#     query = request.GET["search"] #Consulta
-#     process_query = get_query_input(query)
-#     return HttpResponse(type_query)
-
 class DocumentList(ListView): #Vistas de los recursos en PDF###################################
     
     def get(self, request : HttpRequest) -> HttpResponse:
@@ -27,12 +20,6 @@ class DocumentList(ListView): #Vistas de los recursos en PDF####################
         elif(type_query == "Boolean"):
             resource = boolean_model(query)
         elif(type_query =="Extended Boolean"):
-            print("Esta entrandoooooooooooooooo")
             resource = extended_boolean_model(query) 
-
-        # paginator = Paginator(resource, 12)
-        # page = request.GET.get('page')
-        # resources = paginator.get_page(page)
-
 
         return render(request,'documents.html', {'document_list': resource})

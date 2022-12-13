@@ -31,6 +31,8 @@ def terms_query(query): #Pasar a utils q esta repetido para el booleano extendid
 
 def rest_query(query, terms): 
     all_query =  query.split()
+    print(all_query,"All queryyyyyyyyyyyyyyyy")
+    print(terms,"terminossssssssssssssssssssssssssss")
     index = 0
     for i in range(len(all_query)):
         if(all_query[i] != "(" and all_query[i] != ")" and all_query[i] != "and" and all_query[i] != "or" and all_query[i] != "not"):

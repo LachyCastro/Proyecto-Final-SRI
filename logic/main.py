@@ -9,6 +9,7 @@ from .ranking import order_ranking
 import pickle
 from .boolean import *
 from .extended_boolean import *
+from .cran_parser import *
 
 #tODO testing load files
 load_c = True
@@ -80,7 +81,8 @@ def extended_boolean_model(query):
     document_rank = extended_ranking(dic_doc_words,vocabu,query,dic_doc_ind_tfidf)
     return document_rank
 def charge_corpus():
-    text, dic_doc_path = load_corpus('C:/Users/lachy/Videos/LACHY/Proyecto Final SRI/corpus')
+    text, dic_doc_path = load_corpus("C:/Users/lachy/Desktop/CRAN/asd") 
+    #text = parser_cran("C:/Users/lachy/Desktop/CRAN/cran.all.1400")
     #text = load_corpus('C:/Users/acer/Downloads/Telegram Desktop/SRI/corpus') #PC rainel
     tfidf = TfidfVectorizer()
     filter_text = []
@@ -117,6 +119,7 @@ def charge_corpus():
     with open('dic_word_idf.txt','wb') as fh:
         pickle.dump(dic_word_idf,fh)
         fh.close()
+    
     with open('dic_doc_path.txt','wb') as fh:
         pickle.dump(dic_doc_path,fh)
         fh.close()

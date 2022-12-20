@@ -1,6 +1,6 @@
-import pathlib
-from time import time
 from numpy import char
+
+from .proc_query import get_query_input_v
 from .proc_text import filter_words
 from .load_files import load_corpus
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -10,120 +10,171 @@ import pickle
 from .boolean import *
 from .extended_boolean import *
 from .cran_parser import *
+from .utils import terms_query
+from collections import Counter
 
-#tODO testing load files
+# from proc_query import get_query_input_v
+# from proc_text import filter_words
+# from load_files import load_corpus
+# from sklearn.feature_extraction.text import TfidfVectorizer
+# from ranking import cal_ranking
+# from ranking import order_ranking
+# import pickle
+# from boolean import *
+# from extended_boolean import *
+# from cran_parser import *
+# from utils import terms_query
+# from collections import Counter
+
+# tODO testing load files
 load_c = True
 
-def vectorial_model(query):
-    if not load_c:
-        charge_corpus()
-    q = query
-    
-    pickle_1 = open('dic_vocabulary.txt','rb')
-    vocabu = pickle.load(pickle_1)					#!dict{'word':index}
-    pickle_2 = open('dic_word_idf.txt','rb')
-    dic_word_idf = pickle.load(pickle_2)			#!dict{'word':idf}
-    pickle_3 = open('dic_indx_tfidf.txt','rb')
-    dic_indx_tfidf = pickle.load(pickle_3)			#!dict{index:tfidf}
-    pickle_4 = open('dic_doc_words.txt','rb')
-    dic_doc_words = pickle.load(pickle_4)           #!dict{doc:'words'}
-    pickle_5 = open('dic_doc_path.txt','rb')       
-    dic_doc_patch = pickle.load(pickle_5)			#!dict{doc:'patch'}
-    
-    vect_query = {}
-    for term in q:
-        vect_query[vocabu[term]] = dic_word_idf[term]
-    rank = cal_ranking(dic_doc_words,vocabu,q,dic_indx_tfidf,dic_word_idf)
-    orded_rank = order_ranking(rank, dic_doc_patch)#Ordena los path del ranking
-   
-    #se queda con la cantidad que se decidan mostrar y los retorna
-    documents =[]    
-    count = 0
-    for path in orded_rank:
-        if count == 10:
-            break
-       
-        documents.append(path)
-        count += 1
 
-    return documents
-    
+def vectorial_model(query):
+    # if not load_c:
+    #     load_corpus()
+    # q = query
+    # print(query)
+    splited_query = query.split()
+    procesed_query = get_query_input_v(splited_query)
+
+    pickle_1 = open('dic_vocabulary.txt', 'rb')
+    vocabu = pickle.load(pickle_1)  # !dict{'word':index}
+    pickle_2 = open('dic_word_idf.txt', 'rb')
+    dic_word_idf = pickle.load(pickle_2)  # !dict{'word':idf}
+    pickle_3 = open('dic_indx_tfidf.txt', 'rb')
+    dic_indx_tfidf = pickle.load(pickle_3)  # !dict{index:tfidf}
+    pickle_4 = open('dic_doc_words.txt', 'rb')
+    dic_doc_words = pickle.load(pickle_4)  # !dict{doc:'words'}
+    pickle_5 = open('dic_doc_path.txt', 'rb')
+    dic_doc_patch = pickle.load(pickle_5)  # !dict{doc:'patch'}
+
+    counter_dict = Counter(procesed_query)
+    tf_query = calc_tf_query(counter_dict, procesed_query)
+
+    query_weight = calc_weight_query(
+        procesed_query, tf_query, dic_word_idf)
+    rank = cal_ranking(dic_doc_words, vocabu, query_weight,
+                       dic_indx_tfidf, procesed_query)
+    # Ordena los path del ranking
+    orded_rank = order_ranking(rank, dic_doc_patch)
+    return orded_rank
+
+
 def boolean_model(query):
     if not load_c:
         charge_corpus()
 
-    pickle_1 = open('dic_vocabulary.txt','rb')
-    vocabu = pickle.load(pickle_1)					#!dict{'word':index}
-    pickle_4 = open('dic_doc_words.txt','rb')
-    dic_doc_words = pickle.load(pickle_4)           #!dict{doc:'words'}
-    pickle_5 = open('dic_doc_path.txt','rb')       
-    dic_doc_patch = pickle.load(pickle_5)			#!dict{doc:'patch'}
-    
+    pickle_1 = open('dic_vocabulary.txt', 'rb')
+    vocabu = pickle.load(pickle_1)  # !dict{'word':index}
+    pickle_4 = open('dic_doc_words.txt', 'rb')
+    dic_doc_words = pickle.load(pickle_4)  # !dict{doc:'words'}
+    pickle_5 = open('dic_doc_path.txt', 'rb')
+    dic_doc_patch = pickle.load(pickle_5)  # !dict{doc:'patch'}
+
     documents = valid_documents(dic_doc_words, dic_doc_patch, query)
 
     return documents
 
-def extended_boolean_model(query):
+
+def extended_boolean_model(query, is_eval):
     if not load_c:
         charge_corpus()
-    print(query,'query desde boleano extendido')
-    pickle_1 = open('dic_vocabulary.txt','rb')
-    vocabu = pickle.load(pickle_1)					#!dict{'word':index}
-    pickle_3 = open('dic_indx_tfidf.txt','rb')
-    dic_indx_tfidf = pickle.load(pickle_3)			#!dict{index:tfidf}
-    pickle_4 = open('dic_doc_words.txt','rb')
-    dic_doc_words = pickle.load(pickle_4)           #!dict{doc:'words'}
-    pickle_5 = open('dic_doc_path.txt','rb')       
-    dic_doc_patch = pickle.load(pickle_5)			#!dict{doc:'patch'}
-    pickle_6 = open('dic_doc_ind_tfidf.txt','rb')
+
+    pickle_1 = open('dic_vocabulary.txt', 'rb')
+    vocabu = pickle.load(pickle_1)  # !dict{'word':index}
+    pickle_3 = open('dic_indx_tfidf.txt', 'rb')
+    dic_indx_tfidf = pickle.load(pickle_3)  # !dict{index:tfidf}
+    pickle_4 = open('dic_doc_words.txt', 'rb')
+    dic_doc_words = pickle.load(pickle_4)  # !dict{doc:'words'}
+    pickle_5 = open('dic_doc_path.txt', 'rb')
+    dic_doc_patch = pickle.load(pickle_5)  # !dict{doc:'patch'}
+    pickle_6 = open('dic_doc_ind_tfidf.txt', 'rb')
     dic_doc_ind_tfidf = pickle.load(pickle_6)
-    
-    document_rank = extended_ranking(dic_doc_words,vocabu,query,dic_doc_ind_tfidf)
-    return document_rank
+    if not is_eval:
+        terms = terms_query(query)
+        query = evaluate_query(to_dnf(query).__str__(), terms)
+    document_rank = extended_ranking(
+        dic_doc_words, vocabu, query, dic_indx_tfidf)
+    order_rank = order_ranking(document_rank, dic_doc_patch)
+
+    return order_rank
+
+
 def charge_corpus():
-    text, dic_doc_path = load_corpus("C:/Users/lachy/Desktop/CRAN/asd") 
-    #text = parser_cran("C:/Users/lachy/Desktop/CRAN/cran.all.1400")
-    #text = load_corpus('C:/Users/acer/Downloads/Telegram Desktop/SRI/corpus') #PC rainel
+    print("alguien cargo corpus")
+    text, dic_doc_path = load_corpus('C:/Users/lachy/Desktop/CRAN/vaswani')
+    # text = load_corpus('C:/Users/acer/Downloads/Telegram Desktop/SRI/corpus') #PC rainel
     tfidf = TfidfVectorizer()
     filter_text = []
     count = 0
     for t in text:
-        filter_text.append(filter_words(t))
+        filter_text.append(filter_words(t, False))
         print(count)
-        count+=1
-        # if count == 10:
+        count += 1
+        # if count == 5:
         #     break
-    
-    dict_doc_words = {} #aqui se guardaa para cada dcoumento la lista de terminos d ese documento #! dicc2
+
+    # aqui se guardaa para cada dcoumento la lista de terminos d ese documento #! dicc2
+    dict_doc_words = {}
     for i in range(len(filter_text)):
         dict_doc_words[i] = [word for word in filter_text[i].split()]
     result_ = tfidf.fit_transform(filter_text)
-    dic_doc_ind_tfidf = result_
-    data = result_.data
-    indx = result_.indices
-    dic_indx_tfidf = {i:d for i,d in zip(indx,data)} #aqui se guarda indeice vs tfidf #! dicc3
-    vocabu = tfidf.vocabulary_# aqui se guarda nombre vs indice #! dicc4
-    dic_word_idf = {} #aqui se guarda para cada palabra su idf asociado #! dicc1
+    # aqui se guarda indeice vs tfidf #! dicc3
+    # dic_indx_tfidf = {i: d for i, d in zip(indx, data)}
+    dic_indx_tfidf = result_
+    vocabu = tfidf.vocabulary_  # aqui se guarda nombre vs indice #! dicc4
+    dic_word_idf = {}  # aqui se guarda para cada palabra su idf asociado #! dicc1
     for ele1, ele2 in zip(tfidf.get_feature_names_out(), tfidf.idf_):
         dic_word_idf[ele1] = ele2
     print("--------------------------------------------------------------aqui")
-    with open('dic_indx_tfidf.txt','wb') as fh:
-        pickle.dump(dic_indx_tfidf,fh)
+    with open('dic_indx_tfidf.txt', 'wb') as fh:
+        pickle.dump(dic_indx_tfidf, fh)
         fh.close()
-    with open('dic_doc_words.txt','wb') as fh:
-        pickle.dump(dict_doc_words,fh)
+    with open('dic_doc_words.txt', 'wb') as fh:
+        pickle.dump(dict_doc_words, fh)
         fh.close()
-    with open('dic_vocabulary.txt','wb') as fh:
-        pickle.dump(vocabu,fh)
+    with open('dic_vocabulary.txt', 'wb') as fh:
+        pickle.dump(vocabu, fh)
         fh.close()
-    with open('dic_word_idf.txt','wb') as fh:
-        pickle.dump(dic_word_idf,fh)
+    with open('dic_word_idf.txt', 'wb') as fh:
+        pickle.dump(dic_word_idf, fh)
         fh.close()
-    
-    with open('dic_doc_path.txt','wb') as fh:
-        pickle.dump(dic_doc_path,fh)
-        fh.close()
-    with open('dic_doc_ind_tfidf.txt','wb') as fh:
-        pickle.dump(dic_doc_ind_tfidf,fh)
+    with open('dic_doc_path.txt', 'wb') as fh:
+        pickle.dump(dic_doc_path, fh)
         fh.close()
     load_c = True
+
+
+def calc_weight_query(procesed_query, tf_query, dic_word_idf):
+    result = {}
+    for word in procesed_query:
+        try:
+            result[word] = (0.4 + (1 - 0.4) * tf_query[word]) * \
+                dic_word_idf[word]
+        except:
+            result[word] = 0
+    return result
+
+
+def calc_tf_query(counter_dict, procesed_query):
+    tf_query = {}
+    qq = counter_dict.most_common(1)[0][1]
+    for word in procesed_query:
+        tf_query[word] = counter_dict[word] / counter_dict.most_common(1)[0][1]
+    return tf_query
+# charge_corpus()
+#asd = boolean_model("( lachy and me ) and yo")
+
+# a = parser_querys_cran(
+#     'C:/Users/acer/Downloads/Telegram Desktop/SRI/CRAN/cran.qry')
+# b = 0
+# for q in a:
+#     j = vectorial_model(q)
+#     b += 1
+#     print(j)
+#     print(b)
+#     print('\n')
+
+# # pro_q = get_query_input(q)
+# print("hi")

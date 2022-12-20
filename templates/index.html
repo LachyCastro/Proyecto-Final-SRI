@@ -20,6 +20,13 @@
                 <option>Boolean</option>
                 <option>Extended Boolean</option>
               </select>
+              {% if messages %}
+              {% for message in messages %}
+                  <div class="alert alert-danger">
+                      {{ message }}
+                  </div>
+              {% endfor %}
+              {% endif %}
             </div>
           </div>
           <div class="input-field second-wrap">

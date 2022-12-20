@@ -93,7 +93,7 @@ def classify_words(f3_words):
 important_words = ['FW','JJ','JJR','JJS','MD','NN','NNS','NNP','NNPS','VB','VBD','VBG','VBN','VBP','VBZ']
 
 
-def filter_important_words(f4_words) -> str:
+def filter_important_words(f4_words, is_query) -> str:
     """_summary_
 
     Args:
@@ -102,20 +102,24 @@ def filter_important_words(f4_words) -> str:
     Returns:
         str: Devuelve un string con cada palabra separada por espacio
     """
-    f5_words = set(filter(lambda token : token[1] in important_words, f4_words))
+    if is_query:
+        f5_words = list(filter(lambda token : token[1] in important_words, f4_words))
+    else:
+        f5_words = set(filter(lambda token : token[1] in important_words, f4_words))
     result = ''
     for tup in f5_words:
         result += tup[0] + ' '
     return result
 
-def filter_words(lines):
+
+def filter_words(lines, is_query):
     f1 = repleace_contractions(lines)
     f2 = stem_tokens(f1)
     f3 = repleace_punctuation_marks(f2)
     f4 = eliminate_stop_words(f3)
     f5 = classify_words(f4)
     #print(f5)
-    f6 = filter_important_words(f5)
+    f6 = filter_important_words(f5, is_query)
     return f6
 
 

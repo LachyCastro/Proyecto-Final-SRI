@@ -1,11 +1,9 @@
-from numpy import char
-
 from .proc_query import get_query_input_v
 from .proc_text import filter_words
 from .load_files import load_corpus
 from sklearn.feature_extraction.text import TfidfVectorizer
-from .ranking import cal_ranking
-from .ranking import order_ranking
+from ranking import cal_ranking
+from ranking import order_ranking
 import pickle
 from .boolean import *
 from .extended_boolean import *

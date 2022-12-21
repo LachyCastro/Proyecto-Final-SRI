@@ -1,24 +1,25 @@
-# from .proc_query import *
-# from .proc_text import filter_words
-# from .load_files import load_corpus
-# from sklearn.feature_extraction.text import TfidfVectorizer
-# from .ranking import cal_ranking, order_ranking
-# import pickle
-# from .boolean import *
-# from .extended_boolean import *
-# from collections import Counter
-
-from proc_query import *
-from proc_text import filter_words
-from load_files import load_corpus
+from .proc_query import *
+from .proc_text import filter_words
+from .load_files import load_corpus
 from sklearn.feature_extraction.text import TfidfVectorizer
-from ranking import cal_ranking
-from ranking import order_ranking
+from .ranking import cal_ranking, order_ranking
 import pickle
-from boolean import *
-from extended_boolean import *
+from .boolean import *
+from .extended_boolean import *
 from collections import Counter
 
+# from proc_query import *
+# from proc_text import filter_words
+# from load_files import load_corpus
+# from sklearn.feature_extraction.text import TfidfVectorizer
+# from ranking import cal_ranking
+# from ranking import order_ranking
+# import pickle
+# from boolean import *
+# from extended_boolean import *
+# from collections import Counter
+import os
+from pathlib import Path
 load_c = True
 
 
@@ -71,9 +72,9 @@ def extended_boolean_model(query, is_eval):
     dic_doc_words = pickle.load(pickle_4)  # !dict{doc:'words'}
     pickle_5 = open('dic_doc_path.txt', 'rb')
     dic_doc_patch = pickle.load(pickle_5)  # !dict{doc:'patch'}
-    pickle_6 = open('dic_doc_ind_tfidf.txt', 'rb')
+   
     if not is_eval:
-
+        bracket_verify(query)
         query = evaluate_query(to_dnf(query).__str__())
     document_rank = extended_ranking(
         dic_doc_words, vocabu, query, dic_indx_tfidf)
@@ -82,8 +83,10 @@ def extended_boolean_model(query, is_eval):
 
 
 def charge_corpus():
-    text, dic_doc_path = load_corpus(
-        'C:/Users/acer/Downloads/Telegram Desktop/vaswani/vaswani')
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/Corpus'),)
+    path = STATICFILES_DIRS[0].replace('\\','/')
+    text, dic_doc_path = load_corpus(path)
     tfidf = TfidfVectorizer()
     filter_text = []
     count = 0
@@ -119,3 +122,6 @@ def charge_corpus():
         pickle.dump(dic_doc_path, fh)
         fh.close()
     load_c = True
+
+
+

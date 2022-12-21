@@ -1,6 +1,7 @@
 import numpy as np
 import math
 
+
 def cal_ranking(dict_doc_words, dict_vocabulary_index, query_weight, dict_index_tfidf, proc_query):
     result = []
     weight_q = query_weight
@@ -16,38 +17,20 @@ def cal_ranking(dict_doc_words, dict_vocabulary_index, query_weight, dict_index_
                              dict_vocabulary_index[word])])**2
             except KeyError:
                 pass
-
-        a = (math.sqrt(doc_norm) * query_norm)
-        if a == 0.0:
+        norm = (math.sqrt(doc_norm) * query_norm)
+        if norm == 0.0:
             sim = 0
         else:
-            sim = doc_x_q / a
+            sim = doc_x_q / norm
         result.append(sim)
     return result
 
 
-
-def order_ranking(ranking,dic_doc_patch):
+def order_ranking(ranking, dic_doc_patch):
     merged_list = np.argsort(ranking)
     merged_list = np.flip(merged_list)
     path = []
     for i in merged_list:
-        temp = (dic_doc_patch[i],ranking[i])
+        temp = (dic_doc_patch[i], ranking[i])
         path.append(temp)
     return path
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,6 @@
 import nltk
 from nltk.tokenize import word_tokenize
-from nltk import ne_chunk,pos_tag
+from nltk import ne_chunk, pos_tag
 from nltk.corpus import stopwords
 import string
 import re
@@ -21,76 +21,79 @@ def entities(text):
         pos_tag(
             word_tokenize(text)))
 
+
 def __tokenize_and_stem(text):
     tokens = [word for word in nltk.word_tokenize(text)]
     filtered_tokens = []
     for token in tokens:
-        if re.search('[a-zA-Z]',token):
+        if re.search('[a-zA-Z]', token):
             filtered_tokens.append(token)
     stems = [stemmer.stem(t) for t in filtered_tokens]
     return stems
 
 
 __replacement_patterns = [(r'[wW]on\'t', 'will not'),
-                        (r'[cC]an\'t', 'can not'),
-                        (r'[iI]\'m', 'i am'),
-                        (r'[aA]in\'t', 'is not'),
-                        (r'[iI]t\'s', 'it is'),
-                        (r'(\w+)\'ll', '\g<1> will'),
-                        (r'(\w+)n\'t', '\g<1> not'),
-                        (r'(\w+)\'ve', '\g<1> have'),
-                        (r'(\w+)\'s', '\g<1>'),
-                        (r'(\w+)\'re', '\g<1> are'),
-                        (r'(\w+)\'em', '\g<1> them'),
-                        (r'[nN]\'t', 'not'),
-                        (r'\'m', 'am'),
-                        (r'\'s', 'is'),
-                        (r'\'ll', 'will'),
-                        (r'\'ve', 'have'),
-                        (r'\'re', 'are'),
-                        (r'&', 'and'),
-                        (r'%', 'percent')]
+                          (r'[cC]an\'t', 'can not'),
+                          (r'[iI]\'m', 'i am'),
+                          (r'[aA]in\'t', 'is not'),
+                          (r'[iI]t\'s', 'it is'),
+                          (r'(\w+)\'ll', '\g<1> will'),
+                          (r'(\w+)n\'t', '\g<1> not'),
+                          (r'(\w+)\'ve', '\g<1> have'),
+                          (r'(\w+)\'s', '\g<1>'),
+                          (r'(\w+)\'re', '\g<1> are'),
+                          (r'(\w+)\'em', '\g<1> them'),
+                          (r'[nN]\'t', 'not'),
+                          (r'\'m', 'am'),
+                          (r'\'s', 'is'),
+                          (r'\'ll', 'will'),
+                          (r'\'ve', 'have'),
+                          (r'\'re', 'are'),
+                          (r'&', 'and'),
+                          (r'%', 'percent')]
 
 
-stop_words = set(stopwords.words('english')) #! declaro cuales son mis stop_words
+# declaro cuales son mis stop_words
+stop_words = set(stopwords.words('english'))
 
 
 def repleace_contractions(lines):
-    #quitar las contracciones
+    # quitar las contracciones
     f1_words = __replace(lines)
-    #print(f1_words)
     return f1_words
 
 
 def stem_tokens(f1_words):
-    words_tokens = __tokenize_and_stem(f1_words) #! este metodo lleva las palabrasa su raiz
-    #words_tokens = word_tokenize(f1_words)
-    #print(words_tokens) #!hasta aqui quite las contracciones y tokenice
+    # este metodo lleva las palabrasa su raiz
+    words_tokens = __tokenize_and_stem(f1_words)
+    # hasta aqui quite las contracciones y tokenice
     return words_tokens
 
 
 def repleace_punctuation_marks(words_tokens):
-    #quitar los signos de puntuacion
-    f2_words = list(filter(lambda token : token not in string.punctuation, words_tokens))
-    #print(f2_words)#!aqui quito los signos de puntuacion
+    # quitar los signos de puntuacion
+    f2_words = list(
+        filter(lambda token: token not in string.punctuation, words_tokens))
+    # aqui quito los signos de puntuacion
     return f2_words
 
 
 def eliminate_stop_words(f2_words):
-    #quitar los stop_words
-    f3_words = list(filter(lambda token : token not in stop_words, f2_words))
-    #print(f3_words)#! aqui voy a quitar los stop words
+    # quitar los stop_words
+    f3_words = list(filter(lambda token: token not in stop_words, f2_words))
+    # aqui voy a quitar los stop words
     return f3_words
 
 
 def classify_words(f3_words):
-    #clasificar cada palabra
+    # clasificar cada palabra
     f4_words = nltk.pos_tag(f3_words)
-    #print(f4_words)#! aqui clasifico las palabras
+    # aqui clasifico las palabras
     return f4_words
 
 
-important_words = ['FW','JJ','JJR','JJS','MD','NN','NNS','NNP','NNPS','VB','VBD','VBG','VBN','VBP','VBZ']
+important_words = ['FW', 'JJ', 'JJR', 'JJS', 'MD', 'NN', 'NNS',
+                   'NNP', 'NNPS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
 
 
 def filter_important_words(f4_words, is_query) -> str:
@@ -103,9 +106,11 @@ def filter_important_words(f4_words, is_query) -> str:
         str: Devuelve un string con cada palabra separada por espacio
     """
     if is_query:
-        f5_words = list(filter(lambda token : token[1] in important_words, f4_words))
+        f5_words = list(
+            filter(lambda token: token[1] in important_words, f4_words))
     else:
-        f5_words = set(filter(lambda token : token[1] in important_words, f4_words))
+        f5_words = set(
+            filter(lambda token: token[1] in important_words, f4_words))
     result = ''
     for tup in f5_words:
         result += tup[0] + ' '
@@ -118,19 +123,5 @@ def filter_words(lines, is_query):
     f3 = repleace_punctuation_marks(f2)
     f4 = eliminate_stop_words(f3)
     f5 = classify_words(f4)
-    #print(f5)
     f6 = filter_important_words(f5, is_query)
     return f6
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,13 +1,11 @@
-from .proc_query import get_query_input_v
+from .proc_query import *
 from .proc_text import filter_words
 from .load_files import load_corpus
 from sklearn.feature_extraction.text import TfidfVectorizer
-from ranking import cal_ranking
-from ranking import order_ranking
+from .ranking import cal_ranking, order_ranking
 import pickle
 from .boolean import *
 from .extended_boolean import *
-from .cran_parser import *
 from .utils import terms_query
 from collections import Counter
 
@@ -24,15 +22,12 @@ from collections import Counter
 # from utils import terms_query
 # from collections import Counter
 
-# tODO testing load files
 load_c = True
 
 
 def vectorial_model(query):
-    # if not load_c:
-    #     load_corpus()
-    # q = query
-    # print(query)
+    if not load_c:
+        load_corpus()
     splited_query = query.split()
     procesed_query = get_query_input_v(splited_query)
 
@@ -49,12 +44,10 @@ def vectorial_model(query):
 
     counter_dict = Counter(procesed_query)
     tf_query = calc_tf_query(counter_dict, procesed_query)
-
     query_weight = calc_weight_query(
         procesed_query, tf_query, dic_word_idf)
     rank = cal_ranking(dic_doc_words, vocabu, query_weight,
                        dic_indx_tfidf, procesed_query)
-    # Ordena los path del ranking
     orded_rank = order_ranking(rank, dic_doc_patch)
     return orded_rank
 
@@ -62,23 +55,18 @@ def vectorial_model(query):
 def boolean_model(query):
     if not load_c:
         charge_corpus()
-
     pickle_1 = open('dic_vocabulary.txt', 'rb')
-    vocabu = pickle.load(pickle_1)  # !dict{'word':index}
     pickle_4 = open('dic_doc_words.txt', 'rb')
     dic_doc_words = pickle.load(pickle_4)  # !dict{doc:'words'}
     pickle_5 = open('dic_doc_path.txt', 'rb')
     dic_doc_patch = pickle.load(pickle_5)  # !dict{doc:'patch'}
-
     documents = valid_documents(dic_doc_words, dic_doc_patch, query)
-
     return documents
 
 
 def extended_boolean_model(query, is_eval):
     if not load_c:
         charge_corpus()
-
     pickle_1 = open('dic_vocabulary.txt', 'rb')
     vocabu = pickle.load(pickle_1)  # !dict{'word':index}
     pickle_3 = open('dic_indx_tfidf.txt', 'rb')
@@ -88,21 +76,18 @@ def extended_boolean_model(query, is_eval):
     pickle_5 = open('dic_doc_path.txt', 'rb')
     dic_doc_patch = pickle.load(pickle_5)  # !dict{doc:'patch'}
     pickle_6 = open('dic_doc_ind_tfidf.txt', 'rb')
-    dic_doc_ind_tfidf = pickle.load(pickle_6)
     if not is_eval:
-        terms = terms_query(query)
-        query = evaluate_query(to_dnf(query).__str__(), terms)
+
+        query = evaluate_query(to_dnf(query).__str__())
     document_rank = extended_ranking(
         dic_doc_words, vocabu, query, dic_indx_tfidf)
     order_rank = order_ranking(document_rank, dic_doc_patch)
-
     return order_rank
 
 
 def charge_corpus():
-    print("alguien cargo corpus")
-    text, dic_doc_path = load_corpus('C:/Users/lachy/Desktop/CRAN/vaswani')
-    # text = load_corpus('C:/Users/acer/Downloads/Telegram Desktop/SRI/corpus') #PC rainel
+    text, dic_doc_path = load_corpus(
+        'C:/Users/acer/Downloads/Telegram Desktop/vaswani/vaswani')
     tfidf = TfidfVectorizer()
     filter_text = []
     count = 0
@@ -110,8 +95,6 @@ def charge_corpus():
         filter_text.append(filter_words(t, False))
         print(count)
         count += 1
-        # if count == 5:
-        #     break
 
     # aqui se guardaa para cada dcoumento la lista de terminos d ese documento #! dicc2
     dict_doc_words = {}
@@ -161,18 +144,3 @@ def calc_tf_query(counter_dict, procesed_query):
     for word in procesed_query:
         tf_query[word] = counter_dict[word] / counter_dict.most_common(1)[0][1]
     return tf_query
-# charge_corpus()
-#asd = boolean_model("( lachy and me ) and yo")
-
-# a = parser_querys_cran(
-#     'C:/Users/acer/Downloads/Telegram Desktop/SRI/CRAN/cran.qry')
-# b = 0
-# for q in a:
-#     j = vectorial_model(q)
-#     b += 1
-#     print(j)
-#     print(b)
-#     print('\n')
-
-# # pro_q = get_query_input(q)
-# print("hi")

@@ -1,23 +1,19 @@
 import os
 
-from matplotlib.pyplot import title
-
-
-titles = []
-text = []
 
 def load_corpus(path):
-    #por ahora el metodo solo devolvera la lista de los documentos leidos
+    text = []
+    dict_doc_path = {}
+    # por ahora el metodo solo devolvera la lista de los documentos leidos
     if os.path.isdir(path):
-        
+        doc = 0
         for root, dirs, files in os.walk(path):
             for filename in files:
-                with open(os.path.join(root,filename), encoding='utf8', errors='ignore') as f:
-                    titles.append(filename)
+                with open(os.path.join(root, filename), encoding='utf8', errors='ignore') as f:
+                    dict_doc_path[doc] = os.path.join(root, filename)
+                    doc += 1
                     text.append(f.read())
     else:
-        #Exception("Direccion incorrecta")
         print("La direccion no es correcta")
 
-    return text
-
+    return [text, dict_doc_path]

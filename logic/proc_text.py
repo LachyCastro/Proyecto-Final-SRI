@@ -5,7 +5,6 @@ from nltk.corpus import stopwords
 import string
 import re
 from nltk.stem.snowball import SnowballStemmer
-
 stemmer = SnowballStemmer("english")
 
 
@@ -53,12 +52,10 @@ __replacement_patterns = [(r'[wW]on\'t', 'will not'),
                           (r'%', 'percent')]
 
 
-# declaro cuales son mis stop_words
 stop_words = set(stopwords.words('english'))
 
 
 def repleace_contractions(lines):
-    # quitar las contracciones
     f1_words = __replace(lines)
     return f1_words
 
@@ -66,29 +63,22 @@ def repleace_contractions(lines):
 def stem_tokens(f1_words):
     # este metodo lleva las palabrasa su raiz
     words_tokens = __tokenize_and_stem(f1_words)
-    # hasta aqui quite las contracciones y tokenice
     return words_tokens
 
 
 def repleace_punctuation_marks(words_tokens):
-    # quitar los signos de puntuacion
     f2_words = list(
         filter(lambda token: token not in string.punctuation, words_tokens))
-    # aqui quito los signos de puntuacion
     return f2_words
 
 
 def eliminate_stop_words(f2_words):
-    # quitar los stop_words
     f3_words = list(filter(lambda token: token not in stop_words, f2_words))
-    # aqui voy a quitar los stop words
     return f3_words
 
 
 def classify_words(f3_words):
-    # clasificar cada palabra
     f4_words = nltk.pos_tag(f3_words)
-    # aqui clasifico las palabras
     return f4_words
 
 

@@ -1,9 +1,9 @@
-from .proc_text import *
-# from proc_text import *
+# from .proc_text import *
+from proc_text import *
 import math
 from sympy.logic.boolalg import to_dnf
-# from utils import terms_query
-from .utils import terms_query
+from utils import terms_query
+# from .utils import terms_query
 
 
 def extended_ranking(dic_doc_words, vocabu, query, dic_doc_ind_tfidf):

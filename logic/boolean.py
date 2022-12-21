@@ -1,7 +1,7 @@
-# from proc_text import *
-from .proc_text import *
-from .utils import bracket_verify, terms_query
-# from utils import bracket_verify, terms_query
+from proc_text import *
+# from .proc_text import *
+# from .utils import bracket_verify, terms_query
+from utils import bracket_verify, terms_query
 
 
 def valid_documents(dic_doc_words, dic_doc_patch, query):

@@ -1,26 +1,23 @@
-from .proc_query import *
-from .proc_text import filter_words
-from .load_files import load_corpus
-from sklearn.feature_extraction.text import TfidfVectorizer
-from .ranking import cal_ranking, order_ranking
-import pickle
-from .boolean import *
-from .extended_boolean import *
-from .utils import terms_query
-from collections import Counter
-
-# from proc_query import get_query_input_v
-# from proc_text import filter_words
-# from load_files import load_corpus
+# from .proc_query import *
+# from .proc_text import filter_words
+# from .load_files import load_corpus
 # from sklearn.feature_extraction.text import TfidfVectorizer
-# from ranking import cal_ranking
-# from ranking import order_ranking
+# from .ranking import cal_ranking, order_ranking
 # import pickle
-# from boolean import *
-# from extended_boolean import *
-# from cran_parser import *
-# from utils import terms_query
+# from .boolean import *
+# from .extended_boolean import *
 # from collections import Counter
+
+from proc_query import *
+from proc_text import filter_words
+from load_files import load_corpus
+from sklearn.feature_extraction.text import TfidfVectorizer
+from ranking import cal_ranking
+from ranking import order_ranking
+import pickle
+from boolean import *
+from extended_boolean import *
+from collections import Counter
 
 load_c = True
 
@@ -32,16 +29,15 @@ def vectorial_model(query):
     procesed_query = get_query_input_v(splited_query)
 
     pickle_1 = open('dic_vocabulary.txt', 'rb')
-    vocabu = pickle.load(pickle_1)  # !dict{'word':index}
+    vocabu = pickle.load(pickle_1)
     pickle_2 = open('dic_word_idf.txt', 'rb')
-    dic_word_idf = pickle.load(pickle_2)  # !dict{'word':idf}
+    dic_word_idf = pickle.load(pickle_2)
     pickle_3 = open('dic_indx_tfidf.txt', 'rb')
-    dic_indx_tfidf = pickle.load(pickle_3)  # !dict{index:tfidf}
+    dic_indx_tfidf = pickle.load(pickle_3)
     pickle_4 = open('dic_doc_words.txt', 'rb')
-    dic_doc_words = pickle.load(pickle_4)  # !dict{doc:'words'}
+    dic_doc_words = pickle.load(pickle_4)
     pickle_5 = open('dic_doc_path.txt', 'rb')
-    dic_doc_patch = pickle.load(pickle_5)  # !dict{doc:'patch'}
-
+    dic_doc_patch = pickle.load(pickle_5)
     counter_dict = Counter(procesed_query)
     tf_query = calc_tf_query(counter_dict, procesed_query)
     query_weight = calc_weight_query(
@@ -101,8 +97,6 @@ def charge_corpus():
     for i in range(len(filter_text)):
         dict_doc_words[i] = [word for word in filter_text[i].split()]
     result_ = tfidf.fit_transform(filter_text)
-    # aqui se guarda indeice vs tfidf #! dicc3
-    # dic_indx_tfidf = {i: d for i, d in zip(indx, data)}
     dic_indx_tfidf = result_
     vocabu = tfidf.vocabulary_  # aqui se guarda nombre vs indice #! dicc4
     dic_word_idf = {}  # aqui se guarda para cada palabra su idf asociado #! dicc1
@@ -125,22 +119,3 @@ def charge_corpus():
         pickle.dump(dic_doc_path, fh)
         fh.close()
     load_c = True
-
-
-def calc_weight_query(procesed_query, tf_query, dic_word_idf):
-    result = {}
-    for word in procesed_query:
-        try:
-            result[word] = (0.4 + (1 - 0.4) * tf_query[word]) * \
-                dic_word_idf[word]
-        except:
-            result[word] = 0
-    return result
-
-
-def calc_tf_query(counter_dict, procesed_query):
-    tf_query = {}
-    qq = counter_dict.most_common(1)[0][1]
-    for word in procesed_query:
-        tf_query[word] = counter_dict[word] / counter_dict.most_common(1)[0][1]
-    return tf_query

@@ -1,5 +1,5 @@
-# from proc_text import filter_words
-from .proc_text import filter_words
+from proc_text import filter_words
+# from .proc_text import filter_words
 import pickle
 
 

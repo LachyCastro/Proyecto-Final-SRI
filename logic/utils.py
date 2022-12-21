@@ -1,5 +1,5 @@
-from .proc_text import *
-# from proc_text import *
+# from .proc_text import *
+from proc_text import *
 
 
 def bracket_verify(full_query):

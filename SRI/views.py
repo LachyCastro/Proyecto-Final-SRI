@@ -17,7 +17,7 @@ class DocumentList(ListView):
         query = request.GET["search"]  # Consulta desde la web
         resource = []
         if "corpus" in request.GET:
-            print('smlksdlksldmslkdslkmdlskm')
+           
             charge_corpus()
             messages.error(request,"charge corpus done!")
             return redirect("index")

@@ -8,6 +8,8 @@ from proc_query import get_query_input
 import sys
 import os
 from eval import *
+import numpy as np
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
@@ -37,7 +39,8 @@ def eval_model(name_model):
 def create_run(results, query, run):
     run[query[0]] = {}
     for item in results:
-        doc_id = item[0].replace('C:/Users/lachy/Desktop/CRAN/vaswani\\', '')
+        doc_id = item[0].replace(
+            'C:/Users/acer/Downloads/Telegram Desktop/vaswani/vaswani/', '')
         doc_id = doc_id.replace('.txt', '')
         if item[1] > 0.1:
             run[query[0]][doc_id] = item[1]
@@ -54,15 +57,38 @@ def convert_boolean(procc_query):
     return query
 
 
+def unpack():
+    count = 0
+    for doc in dataset.docs_iter():
+        temp = open("C:/Users/acer/Downloads/Telegram Desktop/cord19trec_covidround1/" +
+                    doc[0] + ".txt", 'w', encoding='utf-8', errors='replace')
+        temp.write((doc[1]))
+        temp.close()
+        count += 1
+
+
 # unpack()
-run = eval_model("extended_boolean")
-results = []
-c = 0
-for x in ir_measures.iter_calc([AP, SetF, SetR], qrels, run):
-    c += 1
-    results.append(x)
+def eval_models_and_draw():
+    run = eval_model("vectorial")
+    results = []
+    c = 0
+    # print(SetR.calc_aggregate(qrels, run))
+    for x in ir_measures.iter_calc([P@5, R@5, SetF], qrels, run):
+        results.append(x)
+    # for x in ir_measures.iter_calc([P, R, SetF], qrels, run):
 
-ap, setr, setf = build_graphicss(results)
-draw(ap, setr, setf, 92)
+    measures = build_graphicss(results)
+    draw_P(29, measures)
+    draw_R(29, measures)
+    draw_setF(29, measures)
+    print("++++++++++++++++++++++++++++++++++++++++++++")
 
-print("++++++++++++++++++++++++++++++++++++++++++++")
+    print(np.mean(measures['P']))
+    print(np.mean(measures['R']))
+    print(np.mean(measures['SetF']))
+
+    print(np.var(measures['P']))
+    print(np.var(measures['R']))
+    print(np.var(measures['SetF']))
+
+    print("--------------------")

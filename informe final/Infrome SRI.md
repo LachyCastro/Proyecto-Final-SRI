@@ -69,7 +69,7 @@ de evaluación. Usamos los corpus:
 
 - "cord19/trec-covid/round1" que contiene 51k de documentos y 30 querys
 
-Esta librería a través del método : `ir_measures.iter_calc(args)` nos permite calcular  las métricas que se especifiquen en los argumentos del mismo.
+Esta librería a través del método : `ir_measures.iter_calc(args)` nos permite calcular  las métricas que se especifiquen en los argumentos del mismo. Para calcular Medida F el valor de beta utilizado es $\beta = 1$ que es el por defecto del método al no especificar ningún beta. 
 
 En las gráficas que se encuentran en las carpetas que hay en el directorio junto a este informe se evidencia como se comportó la **Precisión**, **Recobrado** y **Medida F** para cada uno de nuestros modelos en los corpus antes mencionados.
 
@@ -101,16 +101,16 @@ Las siguientes tablas revelan el comportamiento de la media y la varianza en cad
 
 #### Comparación entre los modelos implementados:
 
-| Criterios                                            | Booleano                               | Vectorial                                                             |                                                                             |
-|:----------------------------------------------------:| -------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Documentos                                           | Vectores binarios                      | Vectores de pesos no binarios                                         | Vectores de los pesos asociados a los términos de los documentos (binarios) |
-| Consultas                                            | Expresiones booleanas                  | Vectores de pesos no binarios                                         | Vectores de los pesos asociados a los términos de consulta (binarios)       |
-| Framework                                            | Teoría de conjuntos y algebra booleana | Espacio n-dimensional y operaciones entre vectores del álgebra lineal | Teoría de probabildades                                                     |
-| Pesos                                                | Binarios                               | Dados por tf * idf                                                    | Dados por idf                                                               |
-| Similitud                                            | sim = {0,1}                            | Varía de 0 a 1 dada por el coseno del ángulo                          | sim = $\frac{P(dj)}{\overline P(dj)}$                                       |
-| Dependencia entre términos                           | No                                     | No                                                                    | No                                                                          |
-| Correspondencia parcial entre documentos y consultas | No                                     | Sí                                                                    | Sí                                                                          |
-| Ranking                                              | No                                     | Sí                                                                    | Sí                                                                          |
+| Criterios                                            | Booleano                               | Vectorial                                                             | Booleano extendido                                                                                           |
+|:----------------------------------------------------:| -------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Documentos                                           | Vectores binarios                      | Vectores de pesos no binarios                                         | Vectores de los pesos asociados a los términos de los documentos (binarios)                                  |
+| Consultas                                            | Expresiones booleanas                  | Vectores de pesos no binarios                                         | Vectores de los pesos asociados a los términos de consulta (binarios)                                        |
+| Framework                                            | Teoría de conjuntos y álgebra booleana | Espacio n-dimensional y operaciones entre vectores del álgebra lineal | Espacio n-dimensional, operaciones entre vectores del álgebra lineal, teoría de conjunto y álgebra booleana. |
+| Pesos                                                | Binarios                               | Dados por tf * idf                                                    | Dados por idf                                                                                                |
+| Similitud                                            | sim = {0,1}                            | Varía de 0 a 1 dada por el coseno del ángulo                          | sim = $\frac{P(dj)}{\overline P(dj)}$                                                                        |
+| Dependencia entre términos                           | No                                     | No                                                                    | No                                                                                                           |
+| Correspondencia parcial entre documentos y consultas | No                                     | Sí                                                                    | Sí                                                                                                           |
+| Ranking                                              | No                                     | Sí                                                                    | Sí                                                                                                           |
 
 #### Consideraciones generales:
 
@@ -122,6 +122,8 @@ es necesario volver a cargar el corpus en el botón correspondiente.
 
 ### Ejemplos:
 
-![](C:\Users\acer\Downloads\Telegram%20Desktop\Captura%20web_21-12-2022_739_127.0.0.1.jpeg)
+Para cargar de forma correcta el corpus del que se desea extraer información, se debe acceder a la carpeta static del ptoyecto, dentro de la carpeta corpus se copian todos los archivos del corpus en formato .txt o archivos sin formato. Hecho esto al precionar el botón Charge Corpus( botón verde al lado de la lupa ) este procesará el corpus y creará los diccionarios en la raíz del proyecto. Luego de esto se selecciona el modelo que se utilizará y luego de escribir la query se presiona el botón buscar ( lupa de fondo verde ).
 
-![](C:\Users\acer\Downloads\Telegram%20Desktop\Captura%20web_21-12-2022_7354_127.0.0.1.jpeg)
+![](C:\Users\lachy\Videos\LACHY\SRI%20Repo\Proyecto-Final-SRI\informe%20final\Captura%20web_21-12-2022_739_127.0.0.1.jpeg)
+
+![](C:\Users\lachy\Videos\LACHY\SRI%20Repo\Proyecto-Final-SRI\informe%20final\Captura%20web_21-12-2022_7354_127.0.0.1.jpeg)
